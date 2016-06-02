@@ -17,7 +17,7 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
 	writerIdleTime为写超时时间（即服务器一定时间内向客户端发送消息）
 	allIdleTime为全体超时时间（即同时没有读写的时间）*/
 	
-	private static final int READ_WAIT_SECONDS = 15;
+	private static final int READ_WAIT_SECONDS = 30;
 	private static final int WIRTE_WAIT_SECONDS = 15;
 	private static final int TIME_OUT_SECONDS = 30;
 	

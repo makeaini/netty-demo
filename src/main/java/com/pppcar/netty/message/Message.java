@@ -6,8 +6,17 @@ public class Message implements Serializable {
 
 	private static final long serialVersionUID = 8272631511915108214L;
 	private String id;
+	private String userId;
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
 	private String context;
-	//1，心跳消息，2，普通消息，
+	//1，心跳消息，2，普通消息，3.下线消息，4.认证消息
 	private Integer messageType;
 	private String to;
 	
@@ -43,13 +52,28 @@ public class Message implements Serializable {
 	public void setMessageType(Integer messageType) {
 		this.messageType = messageType;
 	}
+	
+	public Message(String id, String userId,Integer messageType) {
+		this.id = id;
+		this.userId=userId;
+		this.messageType=messageType;
+	}
+	
+	
+	public Message(String id, Integer messageType) {
+		super();
+		this.id = id;
+		this.messageType = messageType;
+	}
 
-	public Message(String id, String context, Integer messageType) {
+	public Message(String id, String context, String to,Integer messageType) {
 		super();
 		this.id = id;
 		this.context = context;
-		this.messageType = messageType;
+		this.to = to;
+		this.messageType=messageType;
 	}
+
 
 	public Message() {
 		// TODO Auto-generated constructor stub

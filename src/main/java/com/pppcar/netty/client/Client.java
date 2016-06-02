@@ -13,6 +13,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolver;
 import io.netty.handler.timeout.IdleStateHandler;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
@@ -49,7 +51,7 @@ public class Client {
 				};
 				pipeline.addLast("decoder", new MessageDecoder(classResolver));
 				pipeline.addLast("encoder", new MessageEncoder());
-				pipeline.addLast("ping", new IdleStateHandler(35, 20, 14));
+				pipeline.addLast("ping", new IdleStateHandler(35, 20, 12));
 				pipeline.addLast("handler", new ClientHandler());
 			}
 		});
@@ -62,7 +64,6 @@ public class Client {
 
 	// 连接到服务端
 	public static void doConnect() {
-		System.out.println("doConnect");
 		ChannelFuture future = null;
 		try {
 			future = bootstrap.connect(new InetSocketAddress(HOST, PORT))
@@ -97,18 +98,23 @@ public class Client {
 		}
 	}
 
+	
+	
+	
 	public static void main(String[] args) throws Exception {
-		try {
-			
-			for (int i = 0; i < 10; i++) {
-				if(channel.isOpen()){
-					Client.sendUser(new Message("111", "客户端发送的消息", 2));
-					Thread.sleep(3000);
-					if(i==3){
-						Message message=new Message(i+"","下线操作",3);
-						Client.sendUser(message);
-					}
-				}
+		  BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			try {
+          while(true){
+        	  if(channel.isOpen()){
+        	  String message=in.readLine().trim();
+        	  Message sendMessage=null;
+        	  	if(message.equals("2")){
+        	  		sendMessage=new Message("2", "客户端发送的消息","100086",2);
+        	  	}else if(message.equals("3")){
+        	  		sendMessage=new Message("3",3);
+        	  	}
+        	    channel.writeAndFlush(sendMessage);
+        	  }
 			
 			}
 		} catch (Exception e) {
@@ -121,8 +127,9 @@ public class Client {
 		public void operationComplete(ChannelFuture f) throws Exception {
 			if (f.isSuccess()) {
 				System.out.println("连接服务器成功");
-				Message message=new Message("3938", "重新连接服务器发送成功", 2);
-				channel.writeAndFlush(message);
+				//Message sendMessage=new Message("4","100085", 4);
+				Message sendMessage=new Message("4","100086", 4);
+				channel.writeAndFlush(sendMessage);
 			} else {
 				System.out.println("重新连接服务器失败");
 				// 3秒后重新连接
