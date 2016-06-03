@@ -10,7 +10,9 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.serialization.ClassResolver;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 
 import java.io.BufferedReader;
@@ -18,6 +20,7 @@ import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.fastjson.JSON;
 import com.pppcar.netty.codec.MessageDecoder;
 import com.pppcar.netty.codec.MessageEncoder;
 import com.pppcar.netty.message.Message;
@@ -41,16 +44,8 @@ public class Client {
 			@Override
 			protected void initChannel(Channel ch) throws Exception {
 				ChannelPipeline pipeline = ch.pipeline();
-				ClassResolver classResolver = new ClassResolver() {
-					@Override
-					public Class<?> resolve(String className)
-							throws ClassNotFoundException {
-						// TODO Auto-generated method stub
-						return Message.class;
-					}
-				};
-				pipeline.addLast("decoder", new MessageDecoder(classResolver));
-				pipeline.addLast("encoder", new MessageEncoder());
+				pipeline.addLast("decoder", new ObjectDecoder(ClassResolvers.cacheDisabled(Message.class.getClassLoader())));
+				pipeline.addLast("encoder", new ObjectEncoder());
 				pipeline.addLast("ping", new IdleStateHandler(35, 20, 12));
 				pipeline.addLast("handler", new ClientHandler());
 			}
@@ -113,6 +108,7 @@ public class Client {
         	  	}else if(message.equals("3")){
         	  		sendMessage=new Message("3",3);
         	  	}
+        		//String text=JSON.toJSONString(sendMessage);
         	    channel.writeAndFlush(sendMessage);
         	  }
 			

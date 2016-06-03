@@ -8,6 +8,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 import com.pppcar.netty.factory.ServerChannelInitializer;
+import com.pppcar.netty.factory.ServerTextChannelInitializer;
 
 public class DiscardServer {
 
@@ -24,7 +25,7 @@ public class DiscardServer {
 			ServerBootstrap b = new ServerBootstrap(); // (2)
 			b.group(bossGroup, workerGroup)
 					.channel(NioServerSocketChannel.class)
-					.childHandler(new ServerChannelInitializer())
+					.childHandler(new ServerTextChannelInitializer())
 					.option(ChannelOption.SO_BACKLOG, 128) // (5)
 					.childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
 			ChannelFuture f = b.bind(port).sync(); // (7)
